@@ -1,5 +1,33 @@
 CFLAGS = -Wall -fpic -coverage -lm
 
+CARD_TESTS  = $(wildcard cardtest*.c)
+UNIT_TESTS = $(wildcard unittest*.c)
+
+CARD_TESTS_EXES = $(patsubst %.c, %, ${CARD_TESTS})
+UNIT_TESTS_EXES = $(patsubst %.c, %, ${UNIT_TESTS})
+
+TESTS_OUT = unittestresults.out
+
+define TEST_STR
+	echo "TEST RUN: ${test}" | tee -a ${TESTS_OUT};
+	@./${test} >> ${TESTS_OUT} 2>&1;
+	@printf "\nGCOV RESULTS AFTER ${test}\n" >> ${TESTS_OUT};
+	@gcov -b -c ./dominion.c >> ${TESTS_OUT};
+	@cat ./dominion.c.gcov >> ${TESTS_OUT};
+	@echo "" >> ${TESTS_OUT};
+endef
+
+${TESTS_OUT}: ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
+	@rm -f ${TESTS_OUT}
+	$(foreach test, ${CARD_TESTS_EXES}, $(TEST_STR))
+	$(foreach test, ${UNIT_TESTS_EXES}, $(TEST_STR))
+
+${UNIT_TESTS_EXES}: % : %.c dominion.o rngs.o
+	gcc -o $@ -g $^ $(CFLAGS)
+
+${CARD_TESTS_EXES}: % : %.c dominion.o rngs.o
+	gcc -o $@ -g $^ $(CFLAGS)
+
 rngs.o: rngs.h rngs.c
 	gcc -c rngs.c -g  $(CFLAGS)
 
@@ -33,7 +61,9 @@ runtests: testDrawCard
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
+
+
 all: playdom player testDrawCard testBuyCard badTestDrawCard
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
