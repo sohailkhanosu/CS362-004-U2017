@@ -18,8 +18,8 @@ endef
 
 ${TESTS_OUT}: clean ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
 	@rm -f ${TESTS_OUT}
-	$(foreach test, ${CARD_TESTS_EXES}, $(TEST_STR))
-	$(foreach test, ${UNIT_TESTS_EXES}, $(TEST_STR))
+	$(foreach test, $(sort ${CARD_TESTS_EXES}), $(TEST_STR))
+	$(foreach test, $(sort ${UNIT_TESTS_EXES}), $(TEST_STR))
 	@printf "\n GCOV SUMMARY\n" >> ${TESTS_OUT}
 	@cat ./dominion.c.gcov >> ${TESTS_OUT}
 
