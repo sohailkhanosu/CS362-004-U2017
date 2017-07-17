@@ -1,4 +1,4 @@
-CFLAGS = -Wall -fpic -coverage -lm
+CFLAGS = -std=c99 -Wall -fpic -coverage -lm
 
 CARD_TESTS  = $(wildcard cardtest*.c)
 UNIT_TESTS = $(wildcard unittest*.c)
