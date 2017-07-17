@@ -10,17 +10,18 @@ TESTS_OUT = unittestresults.out
 
 define TEST_STR
 	echo "TEST RUN: ${test}" | tee -a ${TESTS_OUT};
-	@./${test} >> ${TESTS_OUT} 2>&1;
+	@-./${test}  2>&1 | tee -a ${TESTS_OUT};
 	@printf "\nGCOV RESULTS AFTER ${test}\n" >> ${TESTS_OUT};
 	@gcov -b -c ./dominion.c >> ${TESTS_OUT};
-	@cat ./dominion.c.gcov >> ${TESTS_OUT};
 	@echo "" >> ${TESTS_OUT};
 endef
 
-${TESTS_OUT}: ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
+${TESTS_OUT}: clean ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
 	@rm -f ${TESTS_OUT}
 	$(foreach test, ${CARD_TESTS_EXES}, $(TEST_STR))
 	$(foreach test, ${UNIT_TESTS_EXES}, $(TEST_STR))
+	@printf "\n GCOV SUMMARY\n" >> ${TESTS_OUT}
+	@cat ./dominion.c.gcov >> ${TESTS_OUT}
 
 ${UNIT_TESTS_EXES}: % : %.c dominion.o rngs.o
 	gcc -o $@ -g $^ $(CFLAGS)
