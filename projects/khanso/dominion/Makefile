@@ -67,4 +67,4 @@ player: player.c interface.o
 all: playdom player testDrawCard testBuyCard badTestDrawCard
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
+	rm -rf *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES} *.dSYM
