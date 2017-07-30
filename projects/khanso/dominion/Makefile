@@ -5,8 +5,17 @@ UNIT_TESTS = $(wildcard unittest*.c)
 
 CARD_TESTS_EXES = $(patsubst %.c, %, ${CARD_TESTS})
 UNIT_TESTS_EXES = $(patsubst %.c, %, ${UNIT_TESTS})
+RANDOM_TESTERS = $(wildcard randomtest*.c)
+RANDOM_TESTERS_EXE = $(patsubst %.c, %, ${RANDOM_TESTERS})
+RANDOM_TESTERS_OUT = $(patsubst %.c, %.out, ${RANDOM_TESTERS})
 
 TESTS_OUT = unittestresults.out
+
+QUIET=
+
+ifeq (${QUIET}, 1)
+	CFLAGS += -DQUIET
+endif
 
 define TEST_STR
 	echo "TEST RUN: ${test}" | tee -a ${TESTS_OUT};
@@ -28,6 +37,18 @@ ${UNIT_TESTS_EXES}: % : %.c dominion.o rngs.o
 
 ${CARD_TESTS_EXES}: % : %.c dominion.o rngs.o
 	gcc -o $@ -g $^ $(CFLAGS)
+
+
+${RANDOM_TESTERS_OUT}: %.out: %
+	@echo "Running Random Test $@" | tee $@
+	@ ./$< 2>&1 | tee -a $@
+	@printf "\nGCOV results\n" >> $@
+	@gcov -b -c ./dominion.c >> $@
+	@cat dominion.c.gcov >> $@
+
+
+${RANDOM_TESTERS_EXE}: % : %.c dominion.o rngs.o random_tester_helper.h
+	gcc -o $@ -g $< dominion.o rngs.o ${CFLAGS}
 
 rngs.o: rngs.h rngs.c
 	gcc -c rngs.c -g  $(CFLAGS)
@@ -67,4 +88,4 @@ player: player.c interface.o
 all: playdom player testDrawCard testBuyCard badTestDrawCard
 
 clean:
-	rm -rf *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES} *.dSYM
+	rm -rf *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES} *.dSYM ${RANDOM_TESTERS_EXE}
