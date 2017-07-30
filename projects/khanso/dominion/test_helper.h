@@ -10,8 +10,15 @@
 unsigned int TESTS_PASSED = 0;
 unsigned int TESTS_FAILED = 0;
 
+#ifdef QUIET
+const unsigned char VERBOSE = 0;
+#else
+const unsigned char VERBOSE = 1;
+#endif
+
 #define FAILED_TEST(...) do {\
-    fprintf(stderr, __VA_ARGS__); \
+    if (VERBOSE) \
+        fprintf(stderr, __VA_ARGS__); \
     TESTS_FAILED++;\
 } while (0)
 
@@ -23,7 +30,7 @@ unsigned int TESTS_FAILED = 0;
     if ((_expected_) == (_actual_)) {\
         PASSED_TEST; \
     } else  { \
-        FAILED_TEST("failed: %s: expected %d to be %d\n", (_name_), (_expected_), (_actual_));\
+        FAILED_TEST("failed: %s: expected %d to be %d\n", (_name_), (_actual_), (_expected_));\
     }\
 } while(0)
 
@@ -31,7 +38,7 @@ unsigned int TESTS_FAILED = 0;
     if ((_expected_) != (_actual_)) {\
         PASSED_TEST; \
     } else { \
-        FAILED_TEST("failed: %s: expected %d to not be %d\n", (_name_), (_expected_), (_actual_)); \
+        FAILED_TEST("failed: %s: expected %s and %s to not be %d\n", (_name_), (#_expected_), (#_actual_), (_actual_)); \
     }\
 } while(0)
 
