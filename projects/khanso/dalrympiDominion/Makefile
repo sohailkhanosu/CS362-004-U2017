@@ -1,4 +1,54 @@
-CFLAGS = -Wall -fpic -coverage -lm
+CFLAGS = -std=c99 -Wall -fpic -coverage -lm
+
+CARD_TESTS  = $(wildcard cardtest*.c)
+UNIT_TESTS = $(wildcard unittest*.c)
+
+CARD_TESTS_EXES = $(patsubst %.c, %, ${CARD_TESTS})
+UNIT_TESTS_EXES = $(patsubst %.c, %, ${UNIT_TESTS})
+RANDOM_TESTERS = $(wildcard randomtest*.c)
+RANDOM_TESTERS_EXE = $(patsubst %.c, %, ${RANDOM_TESTERS})
+RANDOM_TESTERS_OUT = $(patsubst %.c, %.out, ${RANDOM_TESTERS})
+
+TESTS_OUT = unittestresults.out
+
+QUIET=
+
+ifeq (${QUIET}, 1)
+	CFLAGS += -DQUIET
+endif
+
+define TEST_STR
+	echo "TEST RUN: ${test}" | tee -a ${TESTS_OUT};
+	@-./${test}  2>&1 | tee -a ${TESTS_OUT};
+	@printf "\nGCOV RESULTS AFTER ${test}\n" >> ${TESTS_OUT};
+	@gcov -b -c ./dominion.c >> ${TESTS_OUT};
+	@echo "" >> ${TESTS_OUT};
+endef
+
+${TESTS_OUT}: clean ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES}
+	@rm -f ${TESTS_OUT}
+	$(foreach test, $(sort ${CARD_TESTS_EXES}), $(TEST_STR))
+	$(foreach test, $(sort ${UNIT_TESTS_EXES}), $(TEST_STR))
+	@printf "\n GCOV SUMMARY\n" >> ${TESTS_OUT}
+	@cat ./dominion.c.gcov >> ${TESTS_OUT}
+
+${UNIT_TESTS_EXES}: % : %.c dominion.o rngs.o
+	gcc -o $@ -g $^ $(CFLAGS)
+
+${CARD_TESTS_EXES}: % : %.c dominion.o rngs.o
+	gcc -o $@ -g $^ $(CFLAGS)
+
+
+${RANDOM_TESTERS_OUT}: %.out: %
+	@echo "Running Random Test $@" | tee $@
+	@ ./$< 2>&1 | tee -a $@
+	@printf "\nGCOV results\n" >> $@
+	@gcov -b -c ./dominion.c >> $@
+	@cat dominion.c.gcov >> $@
+
+
+${RANDOM_TESTERS_EXE}: % : %.c dominion.o rngs.o random_tester_helper.h
+	gcc -o $@ -g $< dominion.o rngs.o ${CFLAGS}
 
 rngs.o: rngs.h rngs.c
 	gcc -c rngs.c -g  $(CFLAGS)
@@ -33,7 +83,9 @@ runtests: testDrawCard
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
+
+
 all: playdom player testDrawCard testBuyCard badTestDrawCard
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+	rm -rf *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe ${UNIT_TESTS_EXES} ${CARD_TESTS_EXES} *.dSYM ${RANDOM_TESTERS_EXE}
