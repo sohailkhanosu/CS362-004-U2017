@@ -7,7 +7,11 @@
 #include "test_helper.h"
 #include "card_test_helper.h"
 
-extern int stewardEffect (int, int, struct gameState*, int, int, int);
+
+int stewardEffect (int player, int handPos, struct gameState* gs, int choice1, int choice2, int choice3)
+{
+    return cardEffect(steward, choice1, choice2, choice3, gs, handPos, NULL);
+}
 
 int
 main ()

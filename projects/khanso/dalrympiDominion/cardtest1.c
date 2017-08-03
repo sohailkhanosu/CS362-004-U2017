@@ -14,7 +14,12 @@
 #include "test_helper.h"
 #include "card_test_helper.h"
 
-extern int adventurerEffect (int, int, struct gameState*);
+extern int fAdventurer(struct gameState*, int cp);
+
+int adventurerEffect (int player, int handpos, struct gameState* gs)
+{
+    return fAdventurer(gs, player);     
+}
 
 int
 main ()

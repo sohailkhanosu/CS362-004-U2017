@@ -8,7 +8,12 @@
 
 #define NUM_ITERATIONS 10000
 
-extern int adventurerEffect(int, int, struct gameState *);
+extern int fAdventurer(struct gameState*, int cp);
+
+int adventurerEffect (int player, int handpos, struct gameState* gs)
+{
+    return fAdventurer(gs, player);     
+}
 
 void
 adventure_card_checker(struct gameState *gs, int numTreasures, int cardPos, int should_reuse_discard)

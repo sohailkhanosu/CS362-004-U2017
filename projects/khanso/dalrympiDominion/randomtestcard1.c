@@ -13,7 +13,10 @@
 
 #define NUM_ITERATIONS 10000
 
-extern int councilRoomEffect(int, int, struct gameState *);
+int councilRoomEffect(int player, int handPos, struct gameState *gs)
+{
+    return cardEffect(council_room,  0, 0, 0, gs, handPos, NULL);
+}
 
 void
 council_room_checker(struct gameState *gs, int cardPos)

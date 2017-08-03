@@ -14,7 +14,10 @@
 #include "card_test_helper.h"
 
 
-extern int councilRoomEffect(int, int, struct gameState*);
+int councilRoomEffect(int player, int handPos, struct gameState *gs)
+{
+    return cardEffect(council_room,  0, 0, 0, gs, handPos, NULL);
+}
 
 int
 main ()

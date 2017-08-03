@@ -13,7 +13,12 @@
 #include "test_helper.h"
 #include "card_test_helper.h"
 
-extern int smithyEffect(int, int, struct gameState*);
+extern int fSmithy(struct gameState*, int, int);
+
+int smithyEffect(int player, int handPos, struct gameState *gs)
+{
+    return fSmithy(gs, player, handPos);
+}
 
 int
 main ()
