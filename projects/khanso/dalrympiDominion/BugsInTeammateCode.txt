@@ -1,0 +1,62 @@
+# bugs
+
+% bug 1
+title: fAdventure sigfaults when there are no treasures in player's deck
+date-ran: 2017-08-02
+version: branch assignment-2
+system details: `Darwin 13.4.0 x86_64 i386`
+gcc version:
+Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
+Apple LLVM version 6.0 (clang-600.0.57) (based on LLVM 3.5svn)
+Target: x86_64-apple-darwin13.4.0
+Thread model: posix
+severity: Major
+description: When calling fAdventure with a player state that contains a deck with no treasure cards, fAdventurer ends up causing a `Segmentation fault: 11`
+expected behavior: fAdventurer returns from call
+actual behavior: segfault
+troubleshooting: tried adding treasure cards to deck, which fixes the segfault issue
+workaround: could not find any workaround with zero treasures
+likely culprit: on lines 668-670, due to infinite while loop, code attempts to address non-addressable memory due to unbounded z value.
+
+```
+temphand[z] = cardDrawn;
+s -> handCount[cp]--; //this should just remove the top card (the most recently drawn one).
+z++;
+```
+
+steps to reproduce:
+    1) setup a game of dominion with two players and include adventure in kingdom cards
+    2) give player 1 adventure card as first card in hand
+    3) get rid of any treasures from player 1's deck (the initial copper coins should be delete or substituted with non treasure cards)
+    4) call `fAdventurer` with player 1 as the player argument
+    5) observe segfault
+
+Attachments: check annotated_gdb_output_adventurer_test.txt
+
+
+% bug 2
+title: fSmithy incorrectly draws more cards from deck than stated in spec
+date-ran: 2017-08-02
+version: branch assignment-2
+system details: `Darwin 13.4.0 x86_64 i386`
+gcc version:
+Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
+Apple LLVM version 6.0 (clang-600.0.57) (based on LLVM 3.5svn)
+Target: x86_64-apple-darwin13.4.0
+Thread model: posix
+severity: Minor
+description: When code executes fSmithy with a player state that includes a deck count larger than 3, fSmithy incorrectly draws more cards than required.
+expected behavior: player should have exactly 3 more cards in hand and handCount should be 3 more than prior to calling fSmithy.
+actual behavior: after executing fSmithy with a deckCount of a player greater than 3, player's handCount is not exactly 3 more than before, its 4 more than before.
+troubleshooting: I got rid of the `i < 4` bit in the for-loop on line 761. That fixes the issue.
+
+likely culprit, as mentioned above, line 761 is the culprit
+```
+    for (i = 0; i < 4; i++) // IS
+```
+steps to reproduce error:
+    1. setup a game of dominion with two players and include smithy in kingdom cards
+    2. give player 1 smithy card as first card in hand and only card in hand.
+    3. make sure player 1 has more than 3 cards in deck (deckCount for player 1 should be larger than 3).
+    4. call fSmithy with player 1 as the player argument
+    5. player's handCount will not be equal to 3

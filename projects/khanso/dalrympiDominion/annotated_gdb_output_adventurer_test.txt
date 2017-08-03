@@ -1,0 +1,36 @@
+$37 = 3
+(gdb) n
+559         if (deckCounter == 0)
+(gdb) n
+560           return -1;
+(gdb) print deckCounter
+$38 = 0
+(gdb) n
+581     }
+(gdb) n
+fAdventurer (s=0x7fff5fbf24e0, cp=0) at dominion.c:663
+663                     cardDrawn = s -> hand[cp][s -> handCount[cp] - 1];//top card of hand is most recently drawn card.
+(gdb) print cardDrawn
+$39 = 1
+(gdb) print s->deckCount
+$40 = {0, 10, 0, 0}                 // NO CARDS DECK!!!
+(gdb) n
+664                     if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gold)
+(gdb) n
+665                             drawntreasure++;
+(gdb) n
+672             }
+(gdb) print cardDrawn
+$41 = 4                         // KEEPS ON USING THE LAST CARD DRAWN
+(gdb) n
+655             while(drawntreasure < 4)
+(gdb) n
+658                     if (s -> deckCount[cp] < 1)
+(gdb) n
+660                             shuffle(cp, s);
+(gdb) n
+662                     drawCard(cp, s);
+(gdb) n
+663                     cardDrawn = s -> hand[cp][s -> handCount[cp] - 1];//top card of hand is most recently drawn card.
+(gdb) n
+664                     if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gol
