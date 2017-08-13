@@ -1,0 +1,100 @@
+Check null url
+true
+Check empty string
+true
+Check basic schemes without port.
+true
+true
+true
+true
+true
+true
+
+Check basic schemes with ports.
+true
+true
+true
+true
+true
+true
+false
+false
+false
+true
+true
+
+Check queries.
+false
+false
+false
+false
+
+Check local hosts.
+false
+false
+true
+
+Check fragments.
+true
+
+Check random stuff.
+true
+true
+true
+Port Partition Tests
+Failed: well known python app port should be good URL: http://www.google.com:8888/somefile.csv Expected: true
+Failed: runescape port should be good URL: http://www.google.com:43594/somefile.csv Expected: true
+Failed: maximum port URL: http://www.google.com:65535/somefile.csv Expected: true
+Total tests: 24 Failing Tests: 3
+Host Partition Tests
+Failed: Host Test: google.co.uk URL: http://google.co.uk/somefile.csv Expected: true
+Failed: Host Test: 256.256.256.256 URL: http://256.256.256.256/somefile.csv Expected: false
+Paths and Options Partition Test
+Failed: path with a space prepended is wrong URL: http://www.google.com / Expected: false
+Failed: path with incorrect percent encoding incorrect URL: http://www.google.com/path/path%2space Expected: false
+Total tests: 14 Failing Tests: 2
+
+Testing queries (Section 2)
+http://www.google.com/somefile.csv?pid=21 INCORRECTLY fails.
+http://www.google.com/somefile.csv?pid=dsdffs INCORRECTLY fails.
+http://www.google.com/somefile.csv?pid=21&risc=98 INCORRECTLY fails.
+http://www.google.com/somefile.csv?pid=21&risc=98&risc=98 INCORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid=21#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid=dsdffs#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid=21&risc=98#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid=21&risc=98&risc=98#wrong fragment CORRECTLY fails.
+http://www.google.com/somefile.csvpid=34 INCORRECTLY passes.
+http://www.google.com/somefile.csv?pid?dsdffs CORRECTLY fails.
+http://www.google.com/somefile.csv?pid=21risc=98 CORRECTLY fails.
+http://www.google.com/somefile.csv?pid=21risc=98&risc=98 CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Pathpid=34#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid?dsdffs#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid=21risc=98#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path?pid=21risc=98&risc=98#wrong fragment CORRECTLY fails.
+
+Test queries final results (Section 2) pass count = 11 and fail count = 5.
+
+Testing Fragments (Section 2)
+http://www.google.com/somefile.csv#row=123 CORRECTLY passes.
+http://www.google.com/somefile.csv#row=asda CORRECTLY passes.
+http://www.google.com/somefile.csv#row=123,128 CORRECTLY passes.
+http://www.google.com/somefile.csv#row=123-125 CORRECTLY passes.
+http://www.google.com/somefile.csv#row=123,128&col=13212 CORRECTLY passes.
+ffa/??://zzz?:32ze/wrong /Path#row=123#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#row=asda#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#row=123,128#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#row=123-125#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#row=123,128&col=13212#wrong fragment CORRECTLY fails.
+http://www.google.com/somefile.csvrow=123 INCORRECTLY passes.
+http://www.google.com/somefile.csv#rowasda INCORRECTLY passes.
+http://www.google.com/somefile.csv#row=123#128 INCORRECTLY passes.
+http://www.google.com/somefile.csvrow=123125 INCORRECTLY passes.
+http://www.google.com/somefile.csv#row=123,128col=13212 INCORRECTLY passes.
+ffa/??://zzz?:32ze/wrong /Pathrow=123#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#rowasda#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#row=123#128#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Pathrow=123125#wrong fragment CORRECTLY fails.
+ffa/??://zzz?:32ze/wrong /Path#row=123,128col=13212#wrong fragment CORRECTLY fails.
+
+Test fragments final results (Section 3) pass count = 15 and fail count = 5.
+Scheme Partition Tests
